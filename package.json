@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r @babel/polyfill -r @babel/register test",
     "start": "webpack serve",
     "build": "webpack"
   },
@@ -20,9 +20,17 @@
   "homepage": "https://github.com/conanKim/kakaopay#readme",
   "devDependencies": {
     "@babel/core": "^7.13.10",
+    "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.13.10",
+    "@babel/register": "^7.13.8",
     "babel-loader": "^8.2.2",
+    "chai": "^4.3.3",
     "html-webpack-plugin": "^5.3.1",
+    "jsdom": "^16.5.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^8.3.1",
+    "mocha-jsdom": "^2.0.0",
+    "sinon": "^9.2.4",
     "webpack": "^5.24.4",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2",

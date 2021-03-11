@@ -1,4 +1,4 @@
-function component() {
+export function component() {
   const element = document.getElementById("main");
   element.innerHTML = "HELLO WORLD";
 
