@@ -1,10 +1,10 @@
 import { expect } from "chai";
+import sinon from "sinon";
 const { JSDOM } = require("jsdom");
 
 describe("main.js", () => {
   describe("Main Test", () => {
     let jsdom;
-    let component;
 
     before(async () => {
       jsdom = await JSDOM.fromFile("index.html", {
@@ -14,15 +14,21 @@ describe("main.js", () => {
       await new Promise((resolve) =>
         jsdom.window.addEventListener("load", resolve)
       );
+      global.window = jsdom.window;
       global.document = jsdom.window.document;
-      component = require("../src/main").component;
     });
 
-    it("HELLO WORLD 가 렌더링 되어야 한다.", () => {
-      component();
+    it('main.js 가 호출 되면 app element 에 대해 router 를 초기화한다.', () => {
+      const router = require("../src/router")
+      const stub = sinon.stub(router, 'initialRoutes');
+      const stubQuerySelector = sinon
+        .stub(document, "querySelector")
+        .returns("APP_ELEMENT");
 
-      const innerHTML = document.getElementById("main").innerHTML;
-      expect(innerHTML).to.equal("HELLO WORLD")
+      require("../src/main");
+
+      expect(stubQuerySelector.calledWith("#app")).to.equals(true);
+      expect(stub.calledWith("APP_ELEMENT")).to.equals(true);
     });
   });
 });

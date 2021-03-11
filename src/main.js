@@ -1,8 +1,16 @@
-export function component() {
-  const element = document.getElementById("main");
-  element.innerHTML = "HELLO WORLD";
+const { initialRoutes, routerPush } = require("./router");
 
-  return element;
-}
+const app = document.querySelector("#app");
 
-document.body.appendChild(component());
+initialRoutes(app);
+
+window.onload = () => {
+  const linker = document.querySelectorAll("div.link-box");
+
+  linker.forEach((el) => {
+    el.addEventListener("click", (evt) => {
+      const pathName = evt.target.getAttribute("route");
+      routerPush(pathName, app);
+    });
+  });
+};
