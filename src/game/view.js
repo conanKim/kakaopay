@@ -1,4 +1,3 @@
-import "../style.css";
 const styles = `
 .header {
   padding-top: 20px;
@@ -24,13 +23,13 @@ button {
   width: 50px;
   height: 30px;
 }
-`
-;
+`;
 
 class GameView extends HTMLElement {
   timer;
   score;
   text;
+  value = "";
 
   constructor() {
     super();
@@ -50,11 +49,27 @@ class GameView extends HTMLElement {
           </div>
           <div id="body">
             <span class='text' id="text">${this.text}</span>
-            <input />
-            <button>시작</button>
+            <input id='input' value="${this.value}" />
+            <button id="button">시작</button>
           </div>
         </div>
       `;
+  }
+  connectedCallback() {
+    const button = this.shadowRoot.getElementById("button");
+    const input = this.shadowRoot.getElementById("input");
+
+    const checkAnswer = () => {
+      if(input.value !== this.value) {
+        this.decreaseScore();
+      }
+    };
+
+    button.addEventListener("click", checkAnswer);
+  }
+  decreaseScore() {
+    this.score = this.score - 1;
+    this.shadowRoot.getElementById("score").innerHTML = this.score;
   }
 }
 customElements.define("game-view", GameView);

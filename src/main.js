@@ -1,3 +1,5 @@
+import "./style.css";
+
 const { initialRoutes, routerPush } = require("./router");
 
 const app = document.querySelector("#app");
