@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -r @babel/polyfill -r @babel/register test",
+    "test": "mocha -r @babel/polyfill -r @babel/register test/*",
     "start": "webpack serve",
     "build": "webpack"
   },
