@@ -1,5 +1,5 @@
-import scorePage from "./pages/score";
-import gamePage from "./pages/game";
+import scorePage from "./score/view";
+import gamePage from "./game/view";
 
 const routes = {
   "/": gamePage,
@@ -17,10 +17,13 @@ function routerPush(pathName, el) {
   renderHTML(el, routes[pathName]);
 }
 
-function renderHTML(el, route) {
-  if(!route) return;
+function renderHTML(parent, route) {
+  if (!route) return;
+  while (parent.hasChildNodes()) {
+    parent.removeChild(parent.firstChild);
+  }
 
-  el.innerHTML = route();
+  parent.appendChild(new route());
 }
 
 export { initialRoutes, routerPush };
