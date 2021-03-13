@@ -182,8 +182,8 @@ class GameView extends HTMLElement {
 
   updateRender() {
     this.button.innerText = Game.ButtonLabel[this.state] || "";
-    this.scoreEl.innerText = this.score || "";
-    this.timerEl.innerText = this.leftTime || "";
+    this.scoreEl.innerText = `점수 : ${this.score}점` || "";
+    this.timerEl.innerText = `남은 시간 : ${this.leftTime}초` || "";
     this.textEl.innerText = this.getStageText();
   }
 
