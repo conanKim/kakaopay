@@ -34,6 +34,11 @@ class GameView extends HTMLElement {
   text;
   value = "";
 
+  input;
+  button;
+  scoreEl;
+  timerEl;
+
   state = Game.State.READY;
 
   constructor() {
@@ -61,8 +66,10 @@ class GameView extends HTMLElement {
       `;
   }
   connectedCallback() {
-    const button = this.shadowRoot.getElementById("button");
-    const input = this.shadowRoot.getElementById("input");
+    this.button = this.shadowRoot.getElementById("button");
+    this.input = this.shadowRoot.getElementById("input");
+    this.scoreEl = this.shadowRoot.getElementById("score");
+    this.timerEl = this.shadowRoot.getElementById("timer");
 
     const handleClick = () => {
       switch (this.state) {
@@ -70,26 +77,42 @@ class GameView extends HTMLElement {
           this.start();
           break;
         case Game.State.GAME:
-          if (input.value !== this.value) {
-            this.decreaseScore();
+          if (this.input.value !== this.value) {
+            this.input.value = "";
           }
           break;
       }
     };
 
-    button.addEventListener("click", handleClick);
+    const handleKeydown = (e) => {
+      if(e.key === 'Enter') {
+        if (this.input.value !== this.value) {
+          this.decreaseScore();
+          this.input.value = "";
+        }
+      }
+    }
+
+    this.button.addEventListener("click", handleClick);
+    this.input.addEventListener('keydown', handleKeydown);
   }
   decreaseScore() {
     this.score = this.score - 1;
-    this.shadowRoot.getElementById("score").innerHTML = this.score;
+    this.scoreEl.innerHTML = this.score;
   }
   start() {
     this.timerId = setInterval(() => {
       this.leftTime = this.leftTime - 1;
-      this.shadowRoot.getElementById("timer").innerHTML = this.leftTime;
+      if(this.leftTime === 0) {
+        this.leftTime = 10;
+        this.score = this.score - 1;
+      }
+
+      this.timerEl.innerHTML = this.leftTime;
+      this.scoreEl.innerHTML = this.score;
     }, 1000);
     this.state = Game.State.GAME;
-    this.shadowRoot.getElementById("button").innerHTML =
+    this.button.innerHTML =
       Game.ButtonLabel[this.state];
   }
 }
