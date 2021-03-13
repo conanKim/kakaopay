@@ -38,16 +38,12 @@ class GameView extends HTMLElement {
   button;
   scoreEl;
   timerEl;
+  textEl;
 
   state = Game.State.READY;
 
   constructor() {
     super();
-
-    this.leftTime = 10;
-    this.score = 10;
-    this.text = "Conan";
-
     const shadowRoot = this.attachShadow({ mode: "open" });
 
     shadowRoot.innerHTML = `
@@ -64,12 +60,48 @@ class GameView extends HTMLElement {
           </div>
         </div>
       `;
+
+    this.init();
   }
+
+  init() {
+    this.state = Game.State.READY;
+
+    this.leftTime = 10;
+    this.score = 10;
+    this.text = "Conan";
+    this.timerId && clearTimeout(this.timerId);
+  }
+
+  start() {
+    this.timerId = setInterval(() => {
+      this.leftTime = this.leftTime - 1;
+      if (this.leftTime === 0) {
+        this.leftTime = 10;
+        this.score = this.score - 1;
+      }
+
+      this.timerEl.innerHTML = this.leftTime;
+      this.scoreEl.innerHTML = this.score;
+
+      this.updateRender();
+    }, 1000);
+    this.state = Game.State.GAME;
+  }
+
+  updateRender() {
+    this.button.innerText = Game.ButtonLabel[this.state];
+    this.scoreEl.innerText = this.score;
+    this.timerEl.innerText = this.leftTime;
+    this.textEl.innerText = this.text;
+  }
+
   connectedCallback() {
     this.button = this.shadowRoot.getElementById("button");
     this.input = this.shadowRoot.getElementById("input");
     this.scoreEl = this.shadowRoot.getElementById("score");
     this.timerEl = this.shadowRoot.getElementById("timer");
+    this.textEl = this.shadowRoot.getElementById("text");
 
     const handleClick = () => {
       switch (this.state) {
@@ -77,43 +109,25 @@ class GameView extends HTMLElement {
           this.start();
           break;
         case Game.State.GAME:
-          if (this.input.value !== this.value) {
-            this.input.value = "";
-          }
+          this.init();
           break;
       }
+
+      this.updateRender();
     };
 
     const handleKeydown = (e) => {
-      if(e.key === 'Enter') {
+      if (e.key === "Enter") {
         if (this.input.value !== this.value) {
-          this.decreaseScore();
           this.input.value = "";
         }
       }
-    }
+    };
 
     this.button.addEventListener("click", handleClick);
-    this.input.addEventListener('keydown', handleKeydown);
-  }
-  decreaseScore() {
-    this.score = this.score - 1;
-    this.scoreEl.innerHTML = this.score;
-  }
-  start() {
-    this.timerId = setInterval(() => {
-      this.leftTime = this.leftTime - 1;
-      if(this.leftTime === 0) {
-        this.leftTime = 10;
-        this.score = this.score - 1;
-      }
+    this.input.addEventListener("keydown", handleKeydown);
 
-      this.timerEl.innerHTML = this.leftTime;
-      this.scoreEl.innerHTML = this.score;
-    }, 1000);
-    this.state = Game.State.GAME;
-    this.button.innerHTML =
-      Game.ButtonLabel[this.state];
+    this.updateRender();
   }
 }
 customElements.define("game-view", GameView);

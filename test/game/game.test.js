@@ -51,6 +51,20 @@ describe("view.js", () => {
       expect(view.score).to.equals(10);
     });
 
+    it('시작 버튼을 누른 경우 게임이 시작된다.', () => {
+      view.state = Game.State.READY;
+      button.click();
+      expect(view.state).to.equals(Game.State.GAME);
+    });
+
+    it('초기화 버튼을 누른 경우 게임이 초기화 된다.', () => {
+      view.state = Game.State.GAME;
+      button.click();
+      expect(view.state).to.equals(Game.State.READY);
+      expect(view.score).to.equals(10);
+      expect(view.leftTime).to.equals(10);
+    });
+
     it("게임 중 오답을 입력하고 Enter 키를 누른 경우 input 이 초기화 된다.", () => {
       view.state = Game.State.GAME;
       view.value = "ANSWER";
