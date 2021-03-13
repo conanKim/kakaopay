@@ -91,9 +91,22 @@ describe("view.js", () => {
       });
     });
 
+    it("게임 중 정답을 입력하고 Enter 키를 누른 경우 다음 스테이지로 넘어간다.", () => {
+      view.state = Game.State.GAME;
+      view.stage = 0;
+      input.value = "ANY_DATA1";
+
+      var event = document.createEvent("Events");
+      event.initEvent("keydown", true, true);
+      event.key = "Enter";
+      input.dispatchEvent(event);
+
+      expect(input.value).to.equals("");
+      expect(view.stage).to.equals(1);
+    });
+
     it("게임 중 오답을 입력하고 Enter 키를 누른 경우 input 이 초기화 된다.", () => {
       view.state = Game.State.GAME;
-      view.data = [{ text: "ANSWER" }];
       view.stage = 0;
       input.value = "ABCD";
 
@@ -103,6 +116,7 @@ describe("view.js", () => {
       input.dispatchEvent(event);
 
       expect(input.value).to.equals("");
+      expect(view.stage).to.equals(0);
     });
 
     it("게임 중 남은시간이 0초가 된 경우 점수가 감소된다.", () => {

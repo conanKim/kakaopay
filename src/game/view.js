@@ -56,7 +56,9 @@ class GameView extends HTMLElement {
           <div id="body">
             <span class='text' id="text">Loading...</span>
             <input id='input' hidden="true" />
-            <button id="button" hidden="true">${Game.ButtonLabel[this.state]}</button>
+            <button id="button" hidden="true">${
+              Game.ButtonLabel[this.state]
+            }</button>
           </div>
         </div>
       `;
@@ -78,6 +80,11 @@ class GameView extends HTMLElement {
     this.state = Game.State.GAME;
     this.input.hidden = false;
 
+    this.setTimer();
+  }
+
+  setTimer() {
+    this.timerId && clearTimeout(this.timerId);
     this.timerId = setInterval(() => {
       this.leftTime = this.leftTime - 1;
       if (this.leftTime === 0) {
@@ -146,9 +153,13 @@ class GameView extends HTMLElement {
 
     const handleKeydown = (e) => {
       if (e.key === "Enter") {
-        if (this.input.value !== this.data[this.stage].text) {
-          this.input.value = "";
+        if (this.input.value === this.data[this.stage].text) {
+          this.stage = this.stage + 1;
+          this.leftTime = this.data[this.stage].time;
+          this.updateRender();
+          this.setTimer();
         }
+        this.input.value = "";
       }
     };
 
