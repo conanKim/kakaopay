@@ -1,4 +1,5 @@
 import { Game } from "../constant";
+import { routerPush } from "../router";
 
 const styles = `
 .header {
@@ -90,7 +91,13 @@ class GameView extends HTMLElement {
       if (this.leftTime === 0) {
         this.score = this.score - 1;
         this.stage = this.stage + 1;
-        this.leftTime = this.data[this.stage].time;
+
+        if (this.stage === this.data.length) {
+          clearTimeout(this.timerId);
+          routerPush("/score", "?time=123");
+        } else {
+          this.leftTime = this.data[this.stage].time;
+        }
       }
 
       this.timerEl.innerHTML = this.leftTime;
@@ -155,9 +162,14 @@ class GameView extends HTMLElement {
       if (e.key === "Enter") {
         if (this.input.value === this.data[this.stage].text) {
           this.stage = this.stage + 1;
-          this.leftTime = this.data[this.stage].time;
-          this.updateRender();
-          this.setTimer();
+          if (this.stage === this.data.length) {
+            clearTimeout(this.timerId);
+            routerPush("/score", "?time=123");
+          } else {
+            this.leftTime = this.data[this.stage].time;
+            this.updateRender();
+            this.setTimer();
+          }
         }
         this.input.value = "";
       }

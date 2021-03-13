@@ -12,7 +12,7 @@ window.onload = () => {
   linker.forEach((el) => {
     el.addEventListener("click", (evt) => {
       const pathName = evt.target.getAttribute("route");
-      routerPush(pathName, app);
+      routerPush(pathName);
     });
   });
 };

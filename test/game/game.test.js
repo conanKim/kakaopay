@@ -143,5 +143,22 @@ describe("view.js", () => {
         done();
       });
     });
+
+    it('마지막 스테이지가 종료되면 결과화면으로 라우팅된다.', () => {
+      var router = require('../../src/router');
+      var stubRouterPush = sinon.stub(router, 'routerPush');
+
+      view.stage = 1;
+      input.value = 'ANY_DATA2';
+
+      var event = document.createEvent("Events");
+      event.initEvent("keydown", true, true);
+      event.key = "Enter";
+      input.dispatchEvent(event);
+
+      expect(stubRouterPush.calledWith('/score')).to.equals(true);
+
+      stubRouterPush.restore();
+    });
   });
 });

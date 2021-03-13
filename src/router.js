@@ -12,9 +12,14 @@ function initialRoutes(el) {
   window.onpopstate = () => renderHTML(el, routes[window.location.pathname]);
 }
 
-function routerPush(pathName, el) {
-  window.history.pushState({}, pathName, window.location.origin + pathName);
-  renderHTML(el, routes[pathName]);
+function routerPush(pathName, query = "") {
+  const app = document.getElementById("app");
+  window.history.pushState(
+    {},
+    pathName,
+    window.location.origin + pathName + query
+  );
+  renderHTML(app, routes[pathName]);
 }
 
 function renderHTML(parent, route) {
