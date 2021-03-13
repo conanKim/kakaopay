@@ -64,6 +64,7 @@ class GameView extends HTMLElement {
 
   init() {
     this.state = Game.State.READY;
+    this.input.value = "";
     this.input.hidden = true;
 
     this.stage = 0;
