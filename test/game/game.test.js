@@ -45,7 +45,7 @@ describe("view.js", () => {
       view.connectedCallback();
 
       stubSetInterval = sinon.stub(global, "setInterval");
-      stubSetInterval.onCall(0).callsFake((arg1, arg2) => {
+      stubSetInterval.callsFake((arg1, arg2) => {
         arg1();
       });
 
@@ -129,7 +129,8 @@ describe("view.js", () => {
       view.state = Game.State.READY;
       view.score = 5;
       view.leftTime = 1;
-      button.click();
+      view.setTimer();
+      stubSetInterval.getCall(0).args[0]();
 
       expect(view.score).to.equals(4);
     });
