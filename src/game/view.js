@@ -55,8 +55,8 @@ class GameView extends HTMLElement {
           </div>
           <div id="body">
             <span class='text' id="text">Loading...</span>
-            <input id='input' />
-            <button id="button">${Game.ButtonLabel[this.state]}</button>
+            <input id='input' hidden="true" />
+            <button id="button" hidden="true">${Game.ButtonLabel[this.state]}</button>
           </div>
         </div>
       `;
@@ -64,6 +64,8 @@ class GameView extends HTMLElement {
 
   init() {
     this.state = Game.State.READY;
+    this.input.hidden = true;
+
     this.stage = 0;
     this.timerId && clearTimeout(this.timerId);
     this.leftTime = this.data[0].time;
@@ -73,6 +75,8 @@ class GameView extends HTMLElement {
 
   start() {
     this.state = Game.State.GAME;
+    this.input.hidden = false;
+
     this.timerId = setInterval(() => {
       this.leftTime = this.leftTime - 1;
       if (this.leftTime === 0) {
@@ -149,6 +153,7 @@ class GameView extends HTMLElement {
 
     this.getData().then((data) => {
       this.data = data;
+      this.button.hidden = false;
       this.init();
       this.updateRender();
     });
