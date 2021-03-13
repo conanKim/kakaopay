@@ -31,8 +31,8 @@ class GameView extends HTMLElement {
   leftTime;
   timerId;
   score;
-  text;
-  value = "";
+  stage = 0;
+  data;
 
   input;
   button;
@@ -50,50 +50,73 @@ class GameView extends HTMLElement {
         <style>${styles}</style>
         <div class="game" id="root">
           <div class="header" id="header">
-            <span id="timer">${this.leftTime}</span>
-            <span id="score">${this.score}</span>
+            <span id="timer"></span>
+            <span id="score"></span>
           </div>
           <div id="body">
-            <span class='text' id="text">${this.text}</span>
-            <input id='input' value="${this.value}" />
+            <span class='text' id="text">Loading...</span>
+            <input id='input' />
             <button id="button">${Game.ButtonLabel[this.state]}</button>
           </div>
         </div>
       `;
-
-    this.init();
   }
 
   init() {
     this.state = Game.State.READY;
-
-    this.leftTime = 10;
-    this.score = 10;
-    this.text = "Conan";
+    this.stage = 0;
     this.timerId && clearTimeout(this.timerId);
+    this.leftTime = this.data[0].time;
+    this.score = this.data.length;
+    this.text = "Conan";
   }
 
   start() {
+    this.state = Game.State.GAME;
     this.timerId = setInterval(() => {
       this.leftTime = this.leftTime - 1;
       if (this.leftTime === 0) {
-        this.leftTime = 10;
         this.score = this.score - 1;
+        this.stage = this.stage + 1;
+        this.leftTime = this.data[this.stage].time;
       }
 
       this.timerEl.innerHTML = this.leftTime;
       this.scoreEl.innerHTML = this.score;
+      this.textEl.innerHTML = this.getStageText();
 
       this.updateRender();
     }, 1000);
-    this.state = Game.State.GAME;
+  }
+
+  getData() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([
+          {
+            time: 10,
+            text: "hello",
+          },
+          {
+            time: 15,
+            text: "world",
+          },
+        ]);
+      }, 2000);
+    });
   }
 
   updateRender() {
-    this.button.innerText = Game.ButtonLabel[this.state];
-    this.scoreEl.innerText = this.score;
-    this.timerEl.innerText = this.leftTime;
-    this.textEl.innerText = this.text;
+    this.button.innerText = Game.ButtonLabel[this.state] || "";
+    this.scoreEl.innerText = this.score || "";
+    this.timerEl.innerText = this.leftTime || "";
+    this.textEl.innerText = this.getStageText();
+  }
+
+  getStageText() {
+    if (!this.data) return "Loading...";
+    if (this.state === Game.State.READY) return "Typing Game";
+    return this.data[this.stage].text;
   }
 
   connectedCallback() {
@@ -118,16 +141,20 @@ class GameView extends HTMLElement {
 
     const handleKeydown = (e) => {
       if (e.key === "Enter") {
-        if (this.input.value !== this.value) {
+        if (this.input.value !== this.data[this.stage].text) {
           this.input.value = "";
         }
       }
     };
 
+    this.getData().then((data) => {
+      this.data = data;
+      this.init();
+      this.updateRender();
+    });
+
     this.button.addEventListener("click", handleClick);
     this.input.addEventListener("keydown", handleKeydown);
-
-    this.updateRender();
   }
 }
 customElements.define("game-view", GameView);
