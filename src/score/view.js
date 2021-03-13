@@ -47,7 +47,7 @@ class ScoreView extends HTMLElement {
     if (!parseFloat(time)) {
       timeEl.innerHTML = `성공 한 문제가 없습니다.`;
     } else {
-      timeEl.innerHTML = `평균 성공 시간은 ${time / 1000}초 입니다.`;
+      timeEl.innerHTML = `평균 성공 시간은 ${(time / 1000).toFixed(4)}초 입니다.`;
     }
     button.onclick = (e) => {
       routerPush("/game");
