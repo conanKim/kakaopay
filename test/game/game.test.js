@@ -2,6 +2,7 @@ import { expect } from "chai";
 import sinon from "sinon";
 import { JSDOM } from "jsdom";
 import { Game } from "../../src/constant";
+import axios from "axios";
 
 describe("view.js", () => {
   describe("Game Test", () => {
@@ -15,6 +16,12 @@ describe("view.js", () => {
     let timerEl;
 
     let stubSetInterval;
+    let stubAxios;
+
+    const data = [
+      { text: "ANY_DATA1", second: 123 },
+      { text: "ANY_DATA2", second: 321 },
+    ];
 
     before(async () => {
       jsdom = new JSDOM("<!doctype html><html><body></body></html>");
@@ -31,10 +38,6 @@ describe("view.js", () => {
       GameView = require("../../src/game/view");
       view = new GameView.default();
       view.getData = () => {
-        const data = [
-          { text: "ANY_DATA1", time: 123 },
-          { text: "ANY_DATA2", time: 321 },
-        ];
         view.data = data;
         return Promise.resolve(data);
       };
@@ -46,6 +49,8 @@ describe("view.js", () => {
         arg1();
       });
 
+      stubAxios = sinon.stub(axios, "get").returns({data: data});
+
       input = view.shadowRoot.getElementById("input");
       button = view.shadowRoot.getElementById("button");
       scoreEl = view.shadowRoot.getElementById("score");
@@ -54,6 +59,7 @@ describe("view.js", () => {
 
     afterEach(() => {
       stubSetInterval.restore();
+      stubAxios.restore();
     });
 
     it("초기 점수는 문제의 갯수이다.", (done) => {

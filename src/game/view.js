@@ -1,5 +1,6 @@
 import { Game } from "../constant";
 import { routerPush } from "../router";
+import axios from "axios";
 
 const styles = `
 .header {
@@ -97,7 +98,7 @@ class GameView extends HTMLElement {
             clearTimeout(this.timerId);
             routerPush("/score", `?time=${this.totalTime / this.score}`);
           } else {
-            this.leftTime = this.data[this.stage].time;
+            this.leftTime = this.data[this.stage].second;
             this.updateRender();
             this.setTimer();
           }
@@ -124,7 +125,7 @@ class GameView extends HTMLElement {
 
     this.stage = 0;
     this.timerId && clearTimeout(this.timerId);
-    this.leftTime = this.data[0].time;
+    this.leftTime = this.data[0].second;
     this.totalTime = 0;
     this.score = this.data.length;
     this.text = "Conan";
@@ -152,7 +153,7 @@ class GameView extends HTMLElement {
           clearTimeout(this.timerId);
           routerPush("/score", `?time=${this.totalTime / this.score}`);
         } else {
-          this.leftTime = this.data[this.stage].time;
+          this.leftTime = this.data[this.stage].second;
         }
       }
 
@@ -165,19 +166,11 @@ class GameView extends HTMLElement {
   }
 
   getData() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          {
-            time: 10,
-            text: "hello",
-          },
-          {
-            time: 15,
-            text: "world",
-          },
-        ]);
-      }, 2000);
+    return axios({
+      url: "https://my-json-server.typicode.com/kakaopay-fe/resources/words",
+      method: "get",
+    }).then((response) => {
+      return response.data;
     });
   }
 
