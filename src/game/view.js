@@ -23,7 +23,7 @@ input {
 }
 button {
   margin: 10px;
-  width: 50px;
+  width: 100px;
   height: 30px;
 }
 `;
@@ -33,6 +33,8 @@ class GameView extends HTMLElement {
   timerId;
   score;
   stage = 0;
+  stageTime;
+  totalTime = 0;
   data;
 
   input;
@@ -65,6 +67,56 @@ class GameView extends HTMLElement {
       `;
   }
 
+  connectedCallback() {
+    this.button = this.shadowRoot.getElementById("button");
+    this.input = this.shadowRoot.getElementById("input");
+    this.scoreEl = this.shadowRoot.getElementById("score");
+    this.timerEl = this.shadowRoot.getElementById("timer");
+    this.textEl = this.shadowRoot.getElementById("text");
+
+    const handleClick = () => {
+      switch (this.state) {
+        case Game.State.READY:
+          this.start();
+          break;
+        case Game.State.GAME:
+          this.init();
+          break;
+      }
+
+      this.updateRender();
+    };
+
+    const handleKeydown = (e) => {
+      if (e.key === "Enter") {
+        if (this.input.value === this.data[this.stage].text) {
+          this.stage = this.stage + 1;
+          this.totalTime += new Date() - this.stageTime;
+
+          if (this.stage === this.data.length) {
+            clearTimeout(this.timerId);
+            routerPush("/score", `?time=${this.totalTime / this.score}`);
+          } else {
+            this.leftTime = this.data[this.stage].time;
+            this.updateRender();
+            this.setTimer();
+          }
+        }
+        this.input.value = "";
+      }
+    };
+
+    this.getData().then((data) => {
+      this.data = data;
+      this.button.hidden = false;
+      this.init();
+      this.updateRender();
+    });
+
+    this.button.addEventListener("click", handleClick);
+    this.input.addEventListener("keydown", handleKeydown);
+  }
+
   init() {
     this.state = Game.State.READY;
     this.input.value = "";
@@ -73,6 +125,7 @@ class GameView extends HTMLElement {
     this.stage = 0;
     this.timerId && clearTimeout(this.timerId);
     this.leftTime = this.data[0].time;
+    this.totalTime = 0;
     this.score = this.data.length;
     this.text = "Conan";
   }
@@ -85,16 +138,18 @@ class GameView extends HTMLElement {
   }
 
   setTimer() {
+    this.stageTime = new Date();
     this.timerId && clearTimeout(this.timerId);
     this.timerId = setInterval(() => {
       this.leftTime = this.leftTime - 1;
       if (this.leftTime === 0) {
+        this.stageTime = new Date();
         this.score = this.score - 1;
         this.stage = this.stage + 1;
 
         if (this.stage === this.data.length) {
           clearTimeout(this.timerId);
-          routerPush("/score", "?time=123");
+          routerPush("/score", `?time=${this.totalTime / this.score}`);
         } else {
           this.leftTime = this.data[this.stage].time;
         }
@@ -136,54 +191,6 @@ class GameView extends HTMLElement {
     if (!this.data) return "Loading...";
     if (this.state === Game.State.READY) return "Typing Game";
     return this.data[this.stage].text;
-  }
-
-  connectedCallback() {
-    this.button = this.shadowRoot.getElementById("button");
-    this.input = this.shadowRoot.getElementById("input");
-    this.scoreEl = this.shadowRoot.getElementById("score");
-    this.timerEl = this.shadowRoot.getElementById("timer");
-    this.textEl = this.shadowRoot.getElementById("text");
-
-    const handleClick = () => {
-      switch (this.state) {
-        case Game.State.READY:
-          this.start();
-          break;
-        case Game.State.GAME:
-          this.init();
-          break;
-      }
-
-      this.updateRender();
-    };
-
-    const handleKeydown = (e) => {
-      if (e.key === "Enter") {
-        if (this.input.value === this.data[this.stage].text) {
-          this.stage = this.stage + 1;
-          if (this.stage === this.data.length) {
-            clearTimeout(this.timerId);
-            routerPush("/score", "?time=123");
-          } else {
-            this.leftTime = this.data[this.stage].time;
-            this.updateRender();
-            this.setTimer();
-          }
-        }
-        this.input.value = "";
-      }
-    };
-
-    this.getData().then((data) => {
-      this.data = data;
-      this.button.hidden = false;
-      this.init();
-      this.updateRender();
-    });
-
-    this.button.addEventListener("click", handleClick);
-    this.input.addEventListener("keydown", handleKeydown);
   }
 }
 customElements.define("game-view", GameView);

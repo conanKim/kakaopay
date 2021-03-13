@@ -144,21 +144,27 @@ describe("view.js", () => {
       });
     });
 
-    it('마지막 스테이지가 종료되면 결과화면으로 라우팅된다.', () => {
-      var router = require('../../src/router');
-      var stubRouterPush = sinon.stub(router, 'routerPush');
+    it("마지막 스테이지가 종료되면 결과화면으로 라우팅된다.", () => {
+      var router = require("../../src/router");
+      var stubRouterPush = sinon.stub(router, "routerPush");
+      var clock = sinon.useFakeTimers(2000);
 
       view.stage = 1;
-      input.value = 'ANY_DATA2';
+      view.totalTime = 1000;
+      view.score = 2;
+      view.leftTime = 10;
+      view.stageTime = 1000;
+      input.value = "ANY_DATA2";
 
       var event = document.createEvent("Events");
       event.initEvent("keydown", true, true);
       event.key = "Enter";
       input.dispatchEvent(event);
 
-      expect(stubRouterPush.calledWith('/score')).to.equals(true);
+      expect(stubRouterPush.calledWith("/score", "?time=1000")).to.equals(true);
 
       stubRouterPush.restore();
+      clock.restore();
     });
   });
 });
