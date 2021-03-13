@@ -133,6 +133,7 @@ class GameView extends HTMLElement {
   start() {
     this.state = Game.State.GAME;
     this.input.hidden = false;
+    this.input.focus();
 
     this.setTimer();
   }
