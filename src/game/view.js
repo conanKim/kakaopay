@@ -96,7 +96,7 @@ class GameView extends HTMLElement {
 
           if (this.stage === this.data.length) {
             clearTimeout(this.timerId);
-            routerPush("/score", `?time=${this.totalTime / this.score}`);
+            this.showScoreView();
           } else {
             this.leftTime = this.data[this.stage].second;
             this.updateRender();
@@ -151,7 +151,7 @@ class GameView extends HTMLElement {
 
         if (this.stage === this.data.length) {
           clearTimeout(this.timerId);
-          routerPush("/score", `?time=${this.totalTime / this.score}`);
+          this.showScoreView();
         } else {
           this.leftTime = this.data[this.stage].second;
         }
@@ -185,6 +185,13 @@ class GameView extends HTMLElement {
     if (!this.data) return "Loading...";
     if (this.state === Game.State.READY) return "Typing Game";
     return this.data[this.stage].text;
+  }
+
+  showScoreView() {
+    routerPush(
+      "/score",
+      `?time=${this.totalTime / this.score}&score=${this.score}`
+    );
   }
 }
 customElements.define("game-view", GameView);
