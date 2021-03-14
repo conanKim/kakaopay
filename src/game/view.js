@@ -19,8 +19,8 @@ const styles = `
 }
 input {
   width: 300px;
-  height: 30px;
-  font-size: 30px;
+  height: 40px;
+  font-size: 25px;
 }
 button {
   margin: 10px;
