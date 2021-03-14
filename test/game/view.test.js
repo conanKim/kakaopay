@@ -168,7 +168,7 @@ describe("view.js", () => {
       event.key = "Enter";
       input.dispatchEvent(event);
 
-      expect(stubRouterPush.calledWith("/score", "?time=1000")).to.equals(true);
+      expect(stubRouterPush.calledWith("/score", "?time=1000&score=2")).to.equals(true);
 
       stubRouterPush.restore();
       clock.restore();

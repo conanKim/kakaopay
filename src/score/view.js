@@ -49,11 +49,14 @@ class ScoreView extends HTMLElement {
     const scoreEl = this.shadowRoot.getElementById("score");
     const button = this.shadowRoot.getElementById("button");
 
+    const fixedTime = (time / 1000).toFixed(4);
+
     if (!parseFloat(time)) {
-      timeEl.innerHTML = `성공 한 문제가 없습니다.`;
+      scoreEl.innerHTML = "";
+      timeEl.innerHTML = `성공한 문제가 없습니다.`;
     } else {
-      scoreEl.innerHTML = `당신의 점수는 ${score}점 입니다.`
-      timeEl.innerHTML = `평균 성공 시간은 ${(time / 1000).toFixed(4)}초 입니다.`;
+      scoreEl.innerHTML = `당신의 점수는 ${score}점 입니다.`;
+      timeEl.innerHTML = `평균 성공 시간은 ${fixedTime}초 입니다.`;
     }
     button.onclick = (e) => {
       routerPush("/game");
